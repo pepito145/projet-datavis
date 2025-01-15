@@ -94,7 +94,6 @@
     <button class="back-button" onclick="window.location.href='/'">Retour</button>
 
     <div class="type-header">
-        <img src="{{ url_for('static', filename='images/types/' + type_name + '.png') }}" alt="{{ type_name }}" class="type-icon">
         <h1>Pokémon de type {{ type_name|capitalize }}</h1>
     </div>
 
@@ -113,9 +112,5 @@
         {% endfor %}
     </div>
 
-    <div class="stats-container">
-        <h2>Statistiques du type {{ type_name|capitalize }}</h2>
-        <!-- Ici nous pourrons ajouter des graphiques et statistiques plus tard -->
-    </div>
 </body>
 </html> 

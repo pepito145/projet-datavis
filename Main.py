@@ -44,12 +44,14 @@ for pokemon in pokemons:
 
 
 def get_pokemon_info(csv_file, pokedex_number):
-	#pokemons = read_objects_from_csv(csv_file)
-    global pokemons
-    for pokemon in pokemons:
-        if pokemon['pokedex_number'] == pokedex_number:
-            return pokemon
-    return None
+	global pokemons
+	print("Recherche du pokemon numéro:", pokedex_number)  # Debug
+	for pokemon in pokemons:
+		print(f"Comparaison avec {pokemon['pokedex_number']} (type: {type(pokemon['pokedex_number'])}) vs {pokedex_number} (type: {type(pokedex_number)})")  # Debug
+		if pokemon['pokedex_number'] == pokedex_number:
+			##print("Pokemon trouvé:", pokemon)  # Debug
+			return pokemon
+	return None
 
 def filter_pokemon(pokemons,input):
 	filtered_pokemon=[]
@@ -97,7 +99,9 @@ def pokemon():
     
     # info d'un pokemon
     pokedex_number = request.args.get('pokedex_number')
+    print("Numéro reçu dans l'URL:", pokedex_number)  # Debug
     pokemon_info = get_pokemon_info("static/data/pokemon.csv", pokedex_number)
+    print("Info pokemon retournée:", pokemon_info)  # Debug
     
     # graphe
     fig = plot_graph()

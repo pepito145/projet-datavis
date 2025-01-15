@@ -78,14 +78,14 @@
 </head>
 <body>
     <section>
-        <img class="image-pokemon" src="{{ url_for('static', filename='images/sprites/' + request.args.get('pokedex_number') + '.png') }}" alt="Dracaufeu">
-        <h1>{{ request.args.get('name') }}</h1>
-        <h1>N° Pokedex : {{ request.args.get('pokedex_number') }}</h1>
+        <img class="image-pokemon" src="{{ url_for('static', filename='images/sprites/' + pokemon_info['pokedex_number'] + '.png') }}" alt="{{ pokemon_info['name'] }}">
+        <h1>{{ pokemon_info['name'] }}</h1>
+        <h1>N° Pokedex : {{ pokemon_info['pokedex_number'] }}</h1>
         <div class="types">
             <img src="{{ url_for('static', filename='images/types/' + pokemon_info['type1'] + '.png') }}" alt="{{ pokemon_info['type1'] }}">
             {% if pokemon_info['type2'] != '' %}
             <img src="{{ url_for('static', filename='images/types/' + pokemon_info['type2'] + '.png') }}" alt="{{ pokemon_info['type2'] }}">
-            {%endif%}
+            {% endif %}
         </div>
     </section>
     

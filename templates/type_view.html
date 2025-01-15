@@ -10,71 +10,110 @@
             min-height: 100vh;
             background-color: #f5f5f5;
             font-family: 'Arial', sans-serif;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        .type-header {
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 100;
+            backdrop-filter: blur(5px);
+            height: 60px;
+            transition: background-color 0.3s ease;
+        }
+
+        .type-title {
+            text-align: center;
+            color: #333;
+            margin: 0;
+            font-size: 2.5rem;
+            text-transform: capitalize;
+        }
+
+        .main-content {
+            padding-top: 80px;
+            min-height: calc(100vh - 80px);
             display: flex;
-            align-items: center;
             justify-content: center;
-            padding: 2rem;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7));
-            color: white;
+            align-items: center;
         }
 
-        .type-icon {
-            width: 100px;
-            height: 100px;
-            margin-right: 20px;
+        .background-type {
+            position: fixed;
+            top: calc(50% + 40px);
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 95vh;
+            height: 95vh;
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        .content-container {
+            position: relative;
+            width: 95vh;
+            height: 95vh;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
         }
 
         .pokemon-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
+            position: absolute;
+            width: 100%;
+            height: 100%;
         }
 
         .pokemon-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1rem;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            transform-origin: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
             transition: transform 0.3s ease;
+            background: none;
         }
 
         .pokemon-card:hover {
-            transform: translateY(-5px);
+            transform: scale(1.2);
+            z-index: 10;
         }
 
         .pokemon-sprite {
-            width: 120px;
-            height: 120px;
+            width: 100%;
+            height: 100%;
             object-fit: contain;
         }
 
-        .pokemon-types {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .type-img {
-            width: 30px;
-            height: 30px;
-        }
-
-        .stats-container {
-            margin-top: 20px;
-            padding: 20px;
-            background: white;
+        .pokemon-name {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 3px 8px;
             border-radius: 10px;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .pokemon-card:hover .pokemon-name {
+            opacity: 1;
         }
 
         .back-button {
@@ -87,30 +126,644 @@
             border-radius: 5px;
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 101;
+        }
+
+        /* Boutons de navigation */
+        .nav-buttons {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-sizing: border-box;
+            z-index: 100;
+        }
+
+        .nav-button {
+            padding: 12px 24px;
+            background-color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-size: 1rem;
+            transition: transform 0.2s ease;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Modales */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 10px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Styles pour la carte Pokémon miniature */
+        .pokemon-mini-card {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+
+        .mini-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .pokemon-sprite-large {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            margin: 10px auto;
+            display: block;
+        }
+
+        .type-effectiveness-mini {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .effectiveness-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .effectiveness-item img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .locations-list {
+            margin: 15px 0;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .more-info-btn {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            padding: 8px 15px;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .more-info-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .close-mini-card {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .right-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .pokemon-list-mode {
+            display: none;
+            position: fixed;
+            top: 80px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            z-index: 90;
+        }
+
+        .list-header {
+            position: sticky;
+            top: 0;
+            display: grid;
+            grid-template-columns: 60px 200px 50px 50px 60px 80px 80px 80px 80px 80px 80px 80px 80px 80px;
+            background-color: #f0f0f0;
+            border-bottom: 2px solid #ddd;
+            padding: 10px 0;
+            z-index: 92;
+        }
+
+        .list-content {
+            padding: 0 20px;
+            overflow-y: auto;
+            height: calc(100% - 45px); /* Hauteur totale moins la hauteur de l'en-tête */
+            margin-top: 0;
+        }
+
+        .pokemon-list-item {
+            display: grid;
+            grid-template-columns: 60px 200px 50px 50px 60px 80px 80px 80px 80px 80px 80px 80px 80px 80px;
+            padding: 8px 0;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .pokemon-list-sprite {
+            width: 50px;
+            height: 50px;
+            margin-right: 15px;
+        }
+
+        .pokemon-list-number {
+            width: 60px;
+            color: #666;
+        }
+
+        .header-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .header-cell:hover {
+            background-color: #e0e0e0;
+        }
+
+        .list-cell {
+            padding: 5px;
+            text-align: center;
+        }
+
+        .list-cell.name {
+            display: flex;
+            align-items: center;
+            text-align: left;
+        }
+
+        .type-icon {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+        }
+
+        .pokemon-list-sprite {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .sort-arrow {
+            display: inline-block;
+            width: 12px;
         }
     </style>
 </head>
 <body>
-    <button class="back-button" onclick="window.location.href='/'">Retour</button>
-
-    <div class="type-header">
-        <h1>Pokémon de type {{ type_name|capitalize }}</h1>
+    <div class="header">
+        <h1 class="type-title">Type {{ type_name }}</h1>
     </div>
 
-    <div class="pokemon-grid">
-        {% for pokemon in type_pokemons %}
-        <div class="pokemon-card" onclick="window.location.href='/pokemon?pokedex_number={{ pokemon.pokedex_number }}'">
-            <img src="{{ url_for('static', filename=pokemon.sprite[7:]) }}" alt="{{ pokemon.name }}" class="pokemon-sprite">
-            <h3>{{ pokemon.name }}</h3>
-            <div class="pokemon-types">
-                <img src="{{ url_for('static', filename=pokemon.imgtype1[7:]) }}" alt="{{ pokemon.type1 }}" class="type-img">
-                {% if pokemon.type2 != '' %}
-                <img src="{{ url_for('static', filename=pokemon.imgtype2[7:]) }}" alt="{{ pokemon.type2 }}" class="type-img">
-                {% endif %}
+    <button class="back-button" onclick="window.location.href='/'">Retour</button>
+    
+    <div class="main-content">
+        <img src="{{ url_for('static', filename='images/types2/' + type_name + '.png') }}" alt="{{ type_name }}" class="background-type" id="typeImage">
+        
+        <div class="content-container">
+            <div class="pokemon-grid">
+                {% for pokemon in type_pokemons %}
+                <div class="pokemon-card" id="pokemon-{{ loop.index0 }}">
+                    <img src="{{ url_for('static', filename='images/sprites/' + pokemon.pokedex_number + '.png') }}" 
+                         alt="{{ pokemon.pokedex_number }}" 
+                         class="pokemon-sprite">
+                    <div class="pokemon-name">{{ pokemon.name }}</div>
+                </div>
+                {% endfor %}
             </div>
         </div>
-        {% endfor %}
     </div>
 
+    <div class="nav-buttons">
+        <button class="nav-button" onclick="openMap()">Carte</button>
+        <div class="right-buttons">
+            <button class="nav-button" onclick="toggleListMode()">Mode liste</button>
+            <button class="nav-button" onclick="openComparison()">Comparaison</button>
+        </div>
+    </div>
+
+    <!-- Modales -->
+    <div id="mapModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('mapModal')">&times;</span>
+            <h2>Carte du jeu</h2>
+            <!-- Contenu de la carte -->
+        </div>
+    </div>
+
+    <div id="comparisonModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('comparisonModal')">&times;</span>
+            <h2>Comparaison de Pokémon</h2>
+            <!-- Interface de comparaison -->
+        </div>
+    </div>
+
+    <!-- Ajouter le template de la carte miniature -->
+    <div class="pokemon-mini-card" id="pokemonMiniCard">
+        <span class="close-mini-card" onclick="closeMiniCard()">&times;</span>
+        <div class="mini-card-header">
+            <h2 id="pokemonName"></h2>
+            <span id="pokedexNumber"></span>
+        </div>
+        <img id="pokemonSpriteLarge" class="pokemon-sprite-large" src="" alt="">
+        
+        <div class="type-effectiveness-mini">
+            <div class="weaknesses" id="weaknesses">
+                <h4>Faiblesses :</h4>
+                <!-- Sera rempli en JS -->
+            </div>
+            <div class="strengths" id="strengths">
+                <h4>Forces :</h4>
+                <!-- Sera rempli en JS -->
+            </div>
+        </div>
+
+        <div class="locations">
+            <h4>Où le trouver :</h4>
+            <div class="locations-list" id="locationsList">
+                <!-- Sera rempli en JS -->
+            </div>
+        </div>
+
+        <button class="more-info-btn" onclick="showFullPokemonPage()">Plus d'infos</button>
+    </div>
+
+    <!-- Ajouter la div pour le mode liste -->
+    <div class="pokemon-list-mode" id="pokemonListMode">
+        <!-- En-tête avec les colonnes triables -->
+        <div class="list-header">
+            <div class="header-cell" data-sort="number"># <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="name">Nom <span class="sort-arrow">▼</span></div>
+            <div class="header-cell" data-sort="type1">Type 1 <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="type2">Type 2 <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="hp">PV <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="attack">Attaque <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="defense">Défense <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="sp_attack">Att. Spé <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="sp_defense">Déf. Spé <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="speed">Vitesse <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="height">Taille <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="weight">Poids <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="capture">Capture <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="is_legendary">Légendaire <span class="sort-arrow"></span></div>
+        </div>
+        <div class="list-content">
+            {% for pokemon in type_pokemons %}
+            <div class="pokemon-list-item" onclick="showPokemonDetails('{{ pokemon.pokedex_number }}')">
+                <div class="list-cell number">#{{ pokemon.pokedex_number }}</div>
+                <div class="list-cell name">
+                    <img src="{{ url_for('static', filename='images/sprites/' + pokemon.pokedex_number + '.png') }}" 
+                         class="pokemon-list-sprite">
+                    {{ pokemon.name }}
+                </div>
+                <div class="list-cell type1">
+                    <img src="{{ url_for('static', filename='images/types2/' + pokemon.type1 + '.png') }}" 
+                         class="type-icon" title="{{ pokemon.type1 }}">
+                </div>
+                <div class="list-cell type2">
+                    {% if pokemon.type2 %}
+                    <img src="{{ url_for('static', filename='images/types2/' + pokemon.type2 + '.png') }}" 
+                         class="type-icon" title="{{ pokemon.type2 }}">
+                    {% endif %}
+                </div>
+                <div class="list-cell hp">{{ pokemon.hp }}</div>
+                <div class="list-cell attack">{{ pokemon.attack }}</div>
+                <div class="list-cell defense">{{ pokemon.defense }}</div>
+                <div class="list-cell sp_attack">{{ pokemon.sp_attack }}</div>
+                <div class="list-cell sp_defense">{{ pokemon.sp_defense }}</div>
+                <div class="list-cell speed">{{ pokemon.speed }}</div>
+                <div class="list-cell height">{{ pokemon.height_m }}m</div>
+                <div class="list-cell weight">{{ pokemon.weight_kg }}kg</div>
+                <div class="list-cell capture">{{ pokemon.capture_rate }}</div>
+                <div class="list-cell is_legendary">{{ '✨' if pokemon.is_legendary == '1' else '' }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        // Fonction pour extraire la couleur dominante
+        function getAverageColor(imageElement) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            const width = imageElement.width;
+            const height = imageElement.height;
+
+            canvas.width = width;
+            canvas.height = height;
+            context.drawImage(imageElement, 0, 0, width, height);
+
+            const imageData = context.getImageData(0, 0, width, height).data;
+            let r = 0, g = 0, b = 0, count = 0;
+
+            for (let i = 0; i < imageData.length; i += 4) {
+                // Ignorer les pixels transparents
+                if (imageData[i + 3] > 128) {
+                    r += imageData[i];
+                    g += imageData[i + 1];
+                    b += imageData[i + 2];
+                    count++;
+                }
+            }
+
+            // Calculer la moyenne
+            r = Math.round(r / count);
+            g = Math.round(g / count);
+            b = Math.round(b / count);
+
+            return { r, g, b };
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const typeImage = document.getElementById('typeImage');
+            const header = document.querySelector('.header');
+            const cards = document.querySelectorAll('.pokemon-card');
+            const totalCards = cards.length;
+
+            typeImage.onload = function() {
+                // Gestion de la couleur du header
+                const color = getAverageColor(typeImage);
+                header.style.backgroundColor = `rgba(${color.r}, ${color.g}, ${color.b}, 0.9)`;
+                
+                const brightness = (color.r * 299 + color.g * 587 + color.b * 114) / 1000;
+                document.querySelector('.type-title').style.color = brightness > 128 ? '#000' : '#fff';
+
+                // Configuration des cercles
+                const maxCardsPerCircle = 12;
+                const numberOfCircles = Math.ceil(totalCards / maxCardsPerCircle);
+                const baseRadius = Math.min(window.innerWidth, window.innerHeight) * 0.35; // Réduit de 0.4 à 0.35
+                const circleSpacing = 100; // Espacement fixe entre les cercles en pixels
+                
+                let remainingCards = totalCards;
+                let currentCardIndex = 0;
+
+                // Distribuer les cartes sur plusieurs cercles
+                for (let circleIndex = 0; circleIndex < numberOfCircles; circleIndex++) {
+                    // Calculer le nombre de cartes pour ce cercle
+                    const cardsInThisCircle = Math.min(maxCardsPerCircle, remainingCards);
+                    
+                    // Calculer le rayon pour ce cercle
+                    // Chaque cercle est espacé de circleSpacing pixels du précédent
+                    const radius = baseRadius - (circleIndex * circleSpacing);
+
+                    // Placer les cartes sur ce cercle
+                    for (let i = 0; i < cardsInThisCircle; i++) {
+                        const card = cards[currentCardIndex];
+                        const angle = (i / cardsInThisCircle) * 2 * Math.PI;
+                        
+                        const x = Math.cos(angle) * radius;
+                        const y = Math.sin(angle) * radius;
+
+                        card.style.left = `calc(50% + ${x}px - 35px)`;
+                        card.style.top = `calc(50% + ${y}px - 35px)`;
+
+                        card.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            const pokemonNumber = card.querySelector('img').alt;
+                            fetch(`/get_pokemon_data/${pokemonNumber}`)
+                                .then(response => response.json())
+                                .then(data => showMiniCard(data));
+                        });
+
+                        currentCardIndex++;
+                    }
+
+                    remainingCards -= cardsInThisCircle;
+                }
+            };
+
+            if (typeImage.complete) {
+                typeImage.onload();
+            }
+        });
+
+        // Fonctions pour les modales
+        function openMap() {
+            document.getElementById('mapModal').style.display = 'block';
+        }
+
+        function openComparison() {
+            document.getElementById('comparisonModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Fermer la modale si on clique en dehors
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // Ajouter ces nouvelles fonctions
+        let currentPokemonNumber = null;
+
+        function showMiniCard(pokemonData) {
+            currentPokemonNumber = pokemonData.pokedex_number;
+            const miniCard = document.getElementById('pokemonMiniCard');
+            
+            // Remplir les informations
+            document.getElementById('pokemonName').textContent = pokemonData.name;
+            document.getElementById('pokedexNumber').textContent = `#${pokemonData.pokedex_number}`;
+            document.getElementById('pokemonSpriteLarge').src = `/static/images/sprites/${pokemonData.pokedex_number}.png`;
+
+            // Remplir les forces et faiblesses (les 3 plus importantes)
+            fillEffectiveness(pokemonData);
+
+            // Remplir les emplacements
+            fetch(`/get_pokemon_locations/${pokemonData.pokedex_number}`)
+                .then(response => response.json())
+                .then(locations => {
+                    const locationsList = document.getElementById('locationsList');
+                    if (locations.length > 0) {
+                        locationsList.innerHTML = locations.map(loc => 
+                            `<div>${loc.route}</div>`
+                        ).join('');
+                    } else {
+                        locationsList.innerHTML = '<div>Aucun emplacement connu</div>';
+                    }
+                });
+
+            miniCard.style.display = 'block';
+        }
+
+        function closeMiniCard() {
+            document.getElementById('pokemonMiniCard').style.display = 'none';
+        }
+
+        function showFullPokemonPage() {
+            window.location.href = `/pokemon?pokedex_number=${currentPokemonNumber}`;
+        }
+
+        function fillEffectiveness(pokemonData) {
+            // Calculer et afficher les 3 plus grandes faiblesses et forces
+            const effectiveness = [];
+            const types = ['bug', 'dark', 'dragon', 'electric', 'fairy', 'fighting', 'fire', 'flying', 'ghost', 'grass', 'ground', 'ice', 'normal', 'poison', 'psychic', 'rock', 'steel', 'water'];
+            
+            types.forEach(type => {
+                const value = parseFloat(pokemonData[`against_${type}`]);
+                effectiveness.push({ type, value });
+            });
+
+            const weaknesses = effectiveness
+                .filter(e => e.value > 1)
+                .sort((a, b) => b.value - a.value)
+                .slice(0, 3);
+
+            const strengths = effectiveness
+                .filter(e => e.value < 1)
+                .sort((a, b) => a.value - b.value)
+                .slice(0, 3);
+
+            // Afficher les résultats
+            document.getElementById('weaknesses').innerHTML = `
+                <h4>Faiblesses :</h4>
+                ${weaknesses.map(w => `
+                    <div class="effectiveness-item">
+                        <img src="/static/images/types2/${w.type}.png" alt="${w.type}">
+                        <span>x${w.value}</span>
+                    </div>
+                `).join('')}
+            `;
+
+            document.getElementById('strengths').innerHTML = `
+                <h4>Forces :</h4>
+                ${strengths.map(s => `
+                    <div class="effectiveness-item">
+                        <img src="/static/images/types2/${s.type}.png" alt="${s.type}">
+                        <span>x${s.value}</span>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function toggleListMode() {
+            const listMode = document.getElementById('pokemonListMode');
+            const currentDisplay = listMode.style.display;
+            listMode.style.display = currentDisplay === 'none' ? 'block' : 'none';
+        }
+
+        function showPokemonDetails(pokemonNumber) {
+            fetch(`/get_pokemon_data/${pokemonNumber}`)
+                .then(response => response.json())
+                .then(data => showMiniCard(data));
+        }
+
+        function initSortableList() {
+            const headers = document.querySelectorAll('.header-cell');
+            let currentSortColumn = 'name'; // Colonne triée par défaut
+            let currentSortDirection = 'desc'; // Direction par défaut
+
+            headers.forEach(header => {
+                header.addEventListener('click', () => {
+                    const sortBy = header.dataset.sort;
+                    const items = Array.from(document.querySelectorAll('.pokemon-list-item'));
+
+                    // Réinitialiser toutes les flèches
+                    document.querySelectorAll('.sort-arrow').forEach(arrow => {
+                        arrow.textContent = '';
+                    });
+
+                    // Mettre à jour la direction de tri
+                    if (sortBy === currentSortColumn) {
+                        currentSortDirection = currentSortDirection === 'desc' ? 'asc' : 'desc';
+                    } else {
+                        currentSortColumn = sortBy;
+                        currentSortDirection = 'desc';
+                    }
+
+                    // Afficher la flèche appropriée
+                    const arrow = header.querySelector('.sort-arrow');
+                    arrow.textContent = currentSortDirection === 'desc' ? '▼' : '▲';
+
+                    items.sort((a, b) => {
+                        let valueA = a.querySelector(`.${sortBy}`).textContent.trim();
+                        let valueB = b.querySelector(`.${sortBy}`).textContent.trim();
+
+                        // Conversion en nombre si nécessaire
+                        if (['hp', 'attack', 'defense', 'sp_attack', 'sp_defense', 'speed', 'capture'].includes(sortBy)) {
+                            valueA = parseInt(valueA) || 0;
+                            valueB = parseInt(valueB) || 0;
+                        } else if (['height', 'weight'].includes(sortBy)) {
+                            valueA = parseFloat(valueA) || 0;
+                            valueB = parseFloat(valueB) || 0;
+                        } else if (sortBy === 'number') {
+                            valueA = parseInt(valueA.replace('#', '')) || 0;
+                            valueB = parseInt(valueB.replace('#', '')) || 0;
+                        }
+
+                        if (currentSortDirection === 'asc') {
+                            return valueA > valueB ? 1 : -1;
+                        } else {
+                            return valueA < valueB ? 1 : -1;
+                        }
+                    });
+
+                    const container = document.querySelector('.list-content');
+                    container.innerHTML = '';
+                    items.forEach(item => container.appendChild(item));
+                });
+            });
+        }
+
+        // Initialiser le tri lors du chargement de la page
+        document.addEventListener('DOMContentLoaded', initSortableList);
+    </script>
 </body>
 </html> 

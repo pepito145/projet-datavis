@@ -2,115 +2,214 @@
 <html lang="en">
 <head>
     <style>
-         body {
+        body {
             position: relative;
             margin: 0;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        section {
-            display: flex;
-            align-items: left;
-            flex-direction: column;
-            width: 50%;
+            font-family: 'Arial', sans-serif;
             padding: 20px;
         }
 
-        h1 {
-            margin-left: 150px;
-        }
-       
-        .types {
+        .main-container {
             display: flex;
-            width: 400px;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+            gap: 40px;
         }
 
-        .section_droite {
+        .left-section {
+            flex: 1;
+            max-width: 600px;
+        }
+
+        .right-section {
+            flex: 1;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        .pokemon-info {
             display: flex;
             flex-direction: column;
-            align-items: right;
-            margin-right: 10px;
+            align-items: center;
         }
 
-        .image-pokemon{
-            margin-left: 100px;
-            height : 250px;
+        .image-pokemon {
+            height: 250px;
             width: 250px;
+            margin-bottom: 20px;
         }
 
-        .menu {
-            display: none;
-            padding: 10px;
-        }
-        
-        /* Section pour un ID particulier */
-        #button_section {
+        .types {
             display: flex;
             gap: 10px;
-            width: 60%;
-            height: 20%;
-            padding: 10px;
-            align-items: flex-start;
+            margin: 20px 0;
         }
 
+        .types img {
+            height: 40px;
+        }
 
-        /* Style des balises d'un tableau */
-        table {
+        .stats-chart {
             width: 100%;
-            border-collapse: collapse;
-            margin-left: 150px;
-            margin-top: 150px;
+            height: 400px;
         }
 
-        th, td {
+        .effectiveness-section {
+            margin-top: 40px;
+            width: 100%;
+        }
+
+        .type-effectiveness {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .type-effect {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             padding: 8px;
-            text-align: left;
+            border-radius: 8px;
+            transition: transform 0.2s ease;
         }
 
-        th {
-            background-color: #f2f2f2;
+        .type-effect:hover {
+            transform: scale(1.05);
         }
 
+        .type-effect img {
+            width: 30px;
+            height: 30px;
+        }
 
+        .effectiveness-value {
+            font-weight: bold;
+            font-size: 0.9em;
+        }
 
+        .super-effective {
+            background-color: #ff000033;
+        }
+
+        .not-very-effective {
+            background-color: #00ff0033;
+        }
+
+        .no-effect {
+            background-color: #80808033;
+        }
+
+        .home-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 2;
+        }
+
+        h1 {
+            margin: 10px 0;
+            color: #333;
+        }
+
+        h2 {
+            color: #444;
+            margin-bottom: 20px;
+        }
     </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
-    <section>
-        <img class="image-pokemon" src="{{ url_for('static', filename='images/sprites/' + pokemon_info['pokedex_number'] + '.png') }}" alt="{{ pokemon_info['name'] }}">
-        <h1>{{ pokemon_info['name'] }}</h1>
-        <h1>N° Pokedex : {{ pokemon_info['pokedex_number'] }}</h1>
-        <div class="types">
-            <img src="{{ url_for('static', filename='images/types/' + pokemon_info['type1'] + '.png') }}" alt="{{ pokemon_info['type1'] }}">
-            {% if pokemon_info['type2'] != '' %}
-            <img src="{{ url_for('static', filename='images/types/' + pokemon_info['type2'] + '.png') }}" alt="{{ pokemon_info['type2'] }}">
-            {% endif %}
-        </div>
-    </section>
-    
-    <section class="section_droite">
-        <!-- Section pour les boutons alignés en haut à droite -->
-        <div id="button_section">
-            <!-- Utilisez la balise button pour créer des boutons cliquables -->
-            <button class="button">Test Plotly</button>
-            <button class="button">Test Other Menu</button>
-        </div>
+    <button class="home-button" onclick="window.location.href='/'">Accueil</button>
 
-        <!-- Section pour les menus -->
-        <div id="menus">
-            <!-- Menu Statistiques -->
-            <div class="menu" id="menu-plot">
-                
-                <div id="plot-div">{{ plot_div|safe }}</div>
-
+    <div class="main-container">
+        <div class="left-section">
+            <div class="pokemon-info">
+                <img class="image-pokemon" src="{{ url_for('static', filename='images/sprites/' + pokemon_info['pokedex_number'] + '.png') }}" alt="{{ pokemon_info['name'] }}">
+                <h1>{{ pokemon_info['name'] }}</h1>
+                <h2>N° Pokedex : {{ pokemon_info['pokedex_number'] }}</h2>
+                <div class="types">
+                    <img src="{{ url_for('static', filename='images/types/' + pokemon_info['type1'] + '.png') }}" alt="{{ pokemon_info['type1'] }}">
+                    {% if pokemon_info['type2'] != '' %}
+                    <img src="{{ url_for('static', filename='images/types/' + pokemon_info['type2'] + '.png') }}" alt="{{ pokemon_info['type2'] }}">
+                    {% endif %}
+                </div>
             </div>
-            <!-- Menu Autre -->
-            <div class="menu" id="menu-other">
-                Other menu
-            <div>
         </div>
-    </section>
-    <script src="static/js/pokemon_menu.js"></script>
+
+        <div class="right-section">
+            <div class="stats-chart" id="statsChart"></div>
+        </div>
+    </div>
+
+    <div class="effectiveness-section">
+        <h2>Forces et Faiblesses</h2>
+        <div class="type-effectiveness">
+            {% for type in ['bug', 'dark', 'dragon', 'electric', 'fairy', 'fighting', 'fire', 'flying', 'ghost', 'grass', 'ground', 'ice', 'normal', 'poison', 'psychic', 'rock', 'steel', 'water'] %}
+                {% set effectiveness = pokemon_info['against_' + type] | float %}
+                <div class="type-effect {% if effectiveness > 1 %}super-effective{% elif effectiveness < 1 %}not-very-effective{% elif effectiveness == 0 %}no-effect{% endif %}">
+                    <img src="{{ url_for('static', filename='images/types2/' + type + '.png') }}" alt="{{ type }}">
+                    <span class="effectiveness-value">x{{ effectiveness }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <script>
+        // Création du graphique des stats
+        const stats = {
+            labels: ['HP', 'Attaque', 'Défense', 'Att. Spé', 'Déf. Spé', 'Vitesse'],
+            values: [
+                {{ pokemon_info['hp'] }},
+                {{ pokemon_info['attack'] }},
+                {{ pokemon_info['defense'] }},
+                {{ pokemon_info['sp_attack'] }},
+                {{ pokemon_info['sp_defense'] }},
+                {{ pokemon_info['speed'] }}
+            ]
+        };
+
+        const data = [{
+            type: 'scatterpolar',
+            r: stats.values,
+            theta: stats.labels,
+            fill: 'toself',
+            name: 'Stats',
+            line: {
+                color: '#FF5252'
+            },
+            fillcolor: 'rgba(255, 82, 82, 0.3)'
+        }];
+
+        const layout = {
+            polar: {
+                radialaxis: {
+                    visible: true,
+                    range: [0, 255]
+                }
+            },
+            showlegend: false,
+            margin: {
+                l: 50,
+                r: 50,
+                t: 50,
+                b: 50
+            }
+        };
+
+        Plotly.newPlot('statsChart', data, layout);
+    </script>
 </body>
 </html>

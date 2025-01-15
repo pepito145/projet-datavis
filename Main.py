@@ -84,6 +84,8 @@ def plot_graph():
     fig = go.Figure(data=[go.Scatter(x=[1, 2, 3, 4], y=[2, 4, 6, 8])])
     return fig
 
+def sort_pokemons(pokemons_list):
+    return sorted(pokemons_list, key=lambda x: int(x['pokedex_number']))
 
 ### Flask routes
 
@@ -91,7 +93,8 @@ def plot_graph():
     # Main templates
 @app.route('/')
 def index():
-    return render_template('index.html', pokemons=pokemons)   
+    sorted_pokemons = sort_pokemons(pokemons)
+    return render_template('index.html', pokemons=sorted_pokemons)   
 
 @app.route('/pokemon')
 def pokemon():
@@ -99,9 +102,13 @@ def pokemon():
     
     # info d'un pokemon
     pokedex_number = request.args.get('pokedex_number')
-    print("Numéro reçu dans l'URL:", pokedex_number)  # Debug
     pokemon_info = get_pokemon_info("static/data/pokemon.csv", pokedex_number)
-    print("Info pokemon retournée:", pokemon_info)  # Debug
+    
+    # Conversion des stats en nombres
+    if pokemon_info:
+        numeric_fields = ['hp', 'attack', 'defense', 'sp_attack', 'sp_defense', 'speed']
+        for field in numeric_fields:
+            pokemon_info[field] = int(pokemon_info[field])
     
     # graphe
     fig = plot_graph()
@@ -142,10 +149,42 @@ def toggle_filter_mode():
 def type_view(type_name):
     # Filtrer les pokémons par type (type1 ou type2)
     type_pokemons = [p for p in pokemons if p['type1'] == type_name or p['type2'] == type_name]
+    sorted_type_pokemons = sort_pokemons(type_pokemons)
     
     return render_template('type_view.html', 
                          type_name=type_name,
-                         type_pokemons=type_pokemons)
+                         type_pokemons=sorted_type_pokemons)
+
+@app.route('/get_pokemon_data/<pokedex_number>')
+def get_pokemon_data(pokedex_number):
+    pokemon = get_pokemon_info("static/data/pokemon.csv", pokedex_number)
+    return jsonify(pokemon)
+
+@app.route('/get_pokemon_locations/<pokedex_number>')
+def get_pokemon_locations(pokedex_number):
+    # D'abord, obtenir le nom du Pokémon à partir de son numéro
+    pokemon_name = None
+    for pokemon in pokemons:
+        if pokemon['pokedex_number'] == pokedex_number:
+            pokemon_name = pokemon['name']
+            break
+    
+    if not pokemon_name:
+        return jsonify([])
+
+    pokemon_locations = []
+    for place in places:
+        # Convertir la chaîne de liste en liste Python
+        pokemon_list_str = place['Pokemons'].strip('[]').replace("'", "").split(', ')
+        if pokemon_name in pokemon_list_str:
+            pokemon_locations.append({
+                'name': place['PlaceName'],
+                'route': place['PlaceName']  # Dans places2.csv, on n'a qu'un nom de lieu
+            })
+    
+    # Trier les emplacements par nom
+    pokemon_locations.sort(key=lambda x: x['name'])
+    return jsonify(pokemon_locations)
 
 
 

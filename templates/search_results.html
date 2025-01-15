@@ -1,0 +1,18 @@
+{% for pokemon in pokemons %}
+        <div class="pokedexBox" onclick="redirectToPokemon('{{ pokemon.pokedex_number }}', '{{ pokemon.name }}')">
+            <div class="pokedexBoxText">
+                <h2>{{ pokemon.pokedex_number }}  {{ pokemon.name }}</h2>
+            </div>
+            <div class="pokedexBoxImages" id="pokemonImage_{{ pokemon.pokedex_number }}">
+                <div class="pokedexBoxSprite">
+                    <img src="{{ pokemon.sprite }}" alt="{{ pokemon.name }}" >
+                </div>
+                <div class="pokedexboxTypes">  
+                    <img src="{{ pokemon.imgtype1 }}" alt="{{ pokemon.type1 }}">
+                    {%if pokemon.type2%}
+                    <img src="{{ pokemon.imgtype2 }}" alt="{{ pokemon.type2 }}">
+                    {%endif%}
+                </div>                
+            </div>
+        </div>
+{% endfor %}

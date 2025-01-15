@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon Type {{ type_name|capitalize }}</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .type-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7));
+            color: white;
+        }
+
+        .type-icon {
+            width: 100px;
+            height: 100px;
+            margin-right: 20px;
+        }
+
+        .pokemon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pokemon-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .pokemon-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .pokemon-sprite {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+        }
+
+        .pokemon-types {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .type-img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .stats-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="window.location.href='/'">Retour</button>
+
+    <div class="type-header">
+        <img src="{{ url_for('static', filename='images/types/' + type_name + '.png') }}" alt="{{ type_name }}" class="type-icon">
+        <h1>Pokémon de type {{ type_name|capitalize }}</h1>
+    </div>
+
+    <div class="pokemon-grid">
+        {% for pokemon in type_pokemons %}
+        <div class="pokemon-card" onclick="window.location.href='/pokemon?pokedex_number={{ pokemon.pokedex_number }}'">
+            <img src="{{ url_for('static', filename=pokemon.sprite[7:]) }}" alt="{{ pokemon.name }}" class="pokemon-sprite">
+            <h3>{{ pokemon.name }}</h3>
+            <div class="pokemon-types">
+                <img src="{{ url_for('static', filename=pokemon.imgtype1[7:]) }}" alt="{{ pokemon.type1 }}" class="type-img">
+                {% if pokemon.type2 != '' %}
+                <img src="{{ url_for('static', filename=pokemon.imgtype2[7:]) }}" alt="{{ pokemon.type2 }}" class="type-img">
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="stats-container">
+        <h2>Statistiques du type {{ type_name|capitalize }}</h2>
+        <!-- Ici nous pourrons ajouter des graphiques et statistiques plus tard -->
+    </div>
+</body>
+</html> 

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon Data Visualization</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f5f5f5;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .search-container {
+            margin-top: 50px;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        #searchInput {
+            width: 80%;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #searchInput:focus {
+            border-color: #ff5252;
+            box-shadow: 0 0 10px rgba(255, 82, 82, 0.2);
+        }
+
+        .types-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px;
+            padding: 40px;
+            max-width: 1200px;
+            margin-top: 50px;
+        }
+
+        .type-card {
+            position: relative;
+            aspect-ratio: 1;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .type-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .type-card:hover {
+            transform: scale(1.1);
+            z-index: 1;
+        }
+
+        .type-card:hover img {
+            transform: scale(1.1);
+        }
+
+        .type-name {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .type-card:hover .type-name {
+            opacity: 1;
+        }
+
+        #pokedexView {
+            display: none;
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Rechercher un Pokémon...">
+    </div>
+
+    <div class="types-grid">
+        <div class="type-card" onclick="redirectToTypeView('bug')">
+            <img src="static/images/types/bug.png" alt="Bug">
+            <span class="type-name">Insecte</span>
+        </div>
+        <div class="type-card" onclick="redirectToTypeView('dark')">
+            <img src="static/images/types/dark.png" alt="Dark">
+            <span class="type-name">Ténèbres</span>
+        </div>
+        <div class="type-card" onclick="redirectToTypeView('dragon')">
+            <img src="static/images/types/dragon.png" alt="Dragon">
+            <span class="type-name">Dragon</span>
+        </div>
+        <div class="type-card" onclick="redirectToTypeView('electric')">
+            <img src="static/images/types/electric.png" alt="Electric">
+            <span class="type-name">Électrik</span>
+        </div>
+        <div class="type-card" onclick="redirectToTypeView('fairy')">
+            <img src="static/images/types/fairy.png" alt="Fairy">
+            <span class="type-name">Fée</span>
+        </div>
+        <div class="type-card" onclick="redirectToTypeView('fighting')">
+            <img src="static/images/types/fighting.png" alt="Fighting">
+            <span class="type-name">Combat</span>
+        </div>
+        <div class="type-card" onclick="redirectToTypeView('fire')">
+            <img src="static/images/types/fire.png" alt="Fire">
+            <span class="type-name">Feu</span>
+        </div>
+        <div class="type-card" onclick="redirectToTypeView('flying')">
+            <img src="static/images/types/flying.png" alt="Flying">
+            <span class="type-name">Vol</span>
+        </div>
+        <div class="type-card" onclick="redirectToTypeView('ghost')">
+            <img src="static/images/types/ghost.png" alt="Ghost">
+            <span class="type-name">Spectre</span>
+        </div>
+        <div class="type-card" onclick="redirectToTypeView('grass')">
+            <img src="static/images/types/grass.png" alt="Grass">
+            <span class="type-name">Plante</span>
+        </div>
+        <div class="type-card" onclick="redirectToTypeView('ground')">
+            <img src="static/images/types/ground.png" alt="Ground">
+            <span class="type-name">Sol</span>
+        </div>
+        <div class="type-card" onclick="redirectToTypeView('ice')">
+            <img src="static/images/types/ice.png" alt="Ice">
+            <span class="type-name">Glace</span>
+        </div>
+        <div class="type-card" onclick="redirectToTypeView('normal')">
+            <img src="static/images/types/normal.png" alt="Normal">
+            <span class="type-name">Normal</span>
+        </div>
+        <div class="type-card" onclick="redirectToTypeView('poison')">
+            <img src="static/images/types/poison.png" alt="Poison">
+            <span class="type-name">Poison</span>
+        </div>
+        <div class="type-card" onclick="redirectToTypeView('psychic')">
+            <img src="static/images/types/psychic.png" alt="Psychic">
+            <span class="type-name">Psy</span>
+        </div>
+        <div class="type-card" onclick="redirectToTypeView('rock')">
+            <img src="static/images/types/rock.png" alt="Rock">
+            <span class="type-name">Roche</span>
+        </div>
+        <div class="type-card" onclick="redirectToTypeView('steel')">
+            <img src="static/images/types/steel.png" alt="Steel">
+            <span class="type-name">Acier</span>
+        </div>
+        <div class="type-card" onclick="redirectToTypeView('water')">
+            <img src="static/images/types/water.png" alt="Water">
+            <span class="type-name">Eau</span>
+        </div>
+    </div>
+
+    <div id="pokedexView">
+        <!-- Le contenu du Pokédex s'affichera ici lors de la recherche -->
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#searchInput').on('input', function() {
+                const query = $(this).val();
+                if (query.length > 0) {
+                    $.ajax({
+                        url: '/search',
+                        type: 'POST',
+                        data: { 'query': query },
+                        success: function(response) {
+                            $('#pokedexView').html(response).show();
+                            $('.types-grid').hide();
+                        }
+                    });
+                } else {
+                    $('#pokedexView').hide();
+                    $('.types-grid').show();
+                }
+            });
+        });
+
+        function redirectToTypeView(type) {
+            window.location.href = `/type/${type}`;
+        }
+    </script>
+</body>
+</html>

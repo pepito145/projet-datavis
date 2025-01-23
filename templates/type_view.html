@@ -11,7 +11,7 @@
             background-color: #f5f5f5;
             font-family: 'Arial', sans-serif;
             position: relative;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
         .header {
@@ -37,11 +37,15 @@
         }
 
         .main-content {
-            padding-top: 80px;
-            min-height: calc(100vh - 80px);
+            position: fixed;
+            top: 80px;
+            left: 0;
+            right: 0;
+            bottom: 0;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
 
         .background-type {
@@ -63,19 +67,20 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .pokemon-grid {
             position: absolute;
             width: 100%;
             height: 100%;
+            pointer-events: none;
         }
 
         .pokemon-card {
             position: absolute;
-            width: 70px;
-            height: 70px;
+            width: 60px;
+            height: 60px;
             transform-origin: center;
             display: flex;
             flex-direction: column;
@@ -84,6 +89,8 @@
             cursor: pointer;
             transition: transform 0.3s ease;
             background: none;
+            z-index: 1;
+            pointer-events: auto;
         }
 
         .pokemon-card:hover {
@@ -141,15 +148,30 @@
             z-index: 100;
         }
 
+        .left-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
         .nav-button {
-            padding: 12px 24px;
+            padding: 8px 16px;
             background-color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            font-size: 1rem;
-            transition: transform 0.2s ease;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-button svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
         }
 
         .nav-button:hover {
@@ -300,7 +322,7 @@
         .list-content {
             padding: 0 20px;
             overflow-y: auto;
-            height: calc(100% - 45px); /* Hauteur totale moins la hauteur de l'en-tête */
+            height: calc(100% - 45px);
             margin-top: 0;
         }
 
@@ -361,6 +383,117 @@
             display: inline-block;
             width: 12px;
         }
+
+        #comparisonMode {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .comparison-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+
+        .comparison-item button {
+            background: #ff5252;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+
+        .comparison-item button:hover {
+            background: #ff3838;
+        }
+
+        .comparison-mode {
+            position: fixed;
+            left: 20px;
+            bottom: 100px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 99;
+            max-width: 300px;
+        }
+
+        .comparison-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .comparison-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .comparison-action-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .comparison-clear-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .pokemon-card.comparison-active {
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .pokemon-card.comparison-active:hover {
+            border-color: #4CAF50;
+            transform: scale(1.05);
+        }
+
+        .comparison-view {
+            padding: 20px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .comparison-pokemon {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .comparison-pokemon img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+        }
+
+        .comparison-pokemon .stats {
+            margin-top: 10px;
+            text-align: left;
+        }
+
+        .comparison-pokemon .stat {
+            padding: 5px 0;
+            border-bottom: 1px solid #ddd;
+        }
     </style>
 </head>
 <body>
@@ -380,7 +513,9 @@
                     <img src="{{ url_for('static', filename='images/sprites/' + pokemon.pokedex_number + '.png') }}" 
                          alt="{{ pokemon.pokedex_number }}" 
                          class="pokemon-sprite">
-                    <div class="pokemon-name">{{ pokemon.name }}</div>
+                    <div class="pokemon-name">
+                        #{{ pokemon.pokedex_number }} {{ pokemon.name }} {% if pokemon.is_legendary == '1' or pokemon.is_legendary == 1 %}⭐{% endif %}
+                    </div>
                 </div>
                 {% endfor %}
             </div>
@@ -388,30 +523,57 @@
     </div>
 
     <div class="nav-buttons">
-        <button class="nav-button" onclick="openMap()">Carte</button>
-        <div class="right-buttons">
-            <button class="nav-button" onclick="toggleListMode()">Mode liste</button>
-            <button class="nav-button" onclick="openComparison()">Comparaison</button>
+        <div class="left-buttons">
+            <button class="nav-button" onclick="openMap()">
+                <svg viewBox="0 0 24 24">
+                    <path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/>
+                </svg>
+                Carte
+            </button>
+            <button class="nav-button" onclick="toggleComparisonMode()">
+                <svg viewBox="0 0 24 24">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+                Comparer
+            </button>
         </div>
+        <button class="nav-button" onclick="toggleListMode()" id="listModeButton">
+            <svg viewBox="0 0 24 24" class="list-icon">
+                <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
+            </svg>
+            Mode liste
+        </button>
     </div>
 
     <!-- Modales -->
     <div id="mapModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('mapModal')">&times;</span>
-            <h2>Carte du jeu</h2>
-            <!-- Contenu de la carte -->
+            <h2>Carte de Kanto</h2>
+            <img src="{{ url_for('static', filename='images/map.jpg') }}" alt="Carte de Kanto" style="width: 100%; height: auto;" onclick="openFullImage(this.src)">
         </div>
     </div>
 
-    <div id="comparisonModal" class="modal">
+    <!-- Ajouter le modal pour l'image en plein écran -->
+    <div id="fullImageModal" class="modal">
         <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('comparisonModal')">&times;</span>
-            <h2>Comparaison de Pokémon</h2>
-            <!-- Interface de comparaison -->
+            <span class="close-modal" onclick="closeModal('fullImageModal')">&times;</span>
+            <img id="fullImage" src="" alt="Image en plein écran">
         </div>
     </div>
 
+    <div id="comparisonMode" class="comparison-mode" style="display: none;">
+        <div class="comparison-content">
+            <h2>Comparaison de Pokémon</h2>
+            <div id="comparisonList"></div>
+            <div class="comparison-buttons">
+                <button onclick="startComparison()" class="comparison-action-btn">Comparer</button>
+                <button onclick="clearComparison()" class="comparison-clear-btn">Effacer</button>
+            </div>
+            
+        </div>
+    </div>
+    
     <!-- Ajouter le template de la carte miniature -->
     <div class="pokemon-mini-card" id="pokemonMiniCard">
         <span class="close-mini-card" onclick="closeMiniCard()">&times;</span>
@@ -574,9 +736,17 @@
                         card.addEventListener('click', function(e) {
                             e.preventDefault();
                             const pokemonNumber = card.querySelector('img').alt;
-                            fetch(`/get_pokemon_data/${pokemonNumber}`)
-                                .then(response => response.json())
-                                .then(data => showMiniCard(data));
+                            if (comparisonMode.style.display === 'block') {
+                                // Si le mode comparaison est actif, ajouter à la comparaison
+                                fetch(`/get_pokemon_data/${pokemonNumber}`)
+                                    .then(response => response.json())
+                                    .then(data => addToComparison(data));
+                            } else {
+                                // Sinon, afficher la mini-carte
+                                fetch(`/get_pokemon_data/${pokemonNumber}`)
+                                    .then(response => response.json())
+                                    .then(data => showMiniCard(data));
+                            }
                         });
 
                         currentCardIndex++;
@@ -593,6 +763,7 @@
 
         // Fonctions pour les modales
         function openMap() {
+            // Logique pour ouvrir la carte
             document.getElementById('mapModal').style.display = 'block';
         }
 
@@ -652,9 +823,28 @@
         }
 
         function fillEffectiveness(pokemonData) {
-            // Calculer et afficher les 3 plus grandes faiblesses et forces
             const effectiveness = [];
             const types = ['bug', 'dark', 'dragon', 'electric', 'fairy', 'fighting', 'fire', 'flying', 'ghost', 'grass', 'ground', 'ice', 'normal', 'poison', 'psychic', 'rock', 'steel', 'water'];
+            const typeNames = {
+                'bug': 'Insecte',
+                'dark': 'Ténèbres',
+                'dragon': 'Dragon',
+                'electric': 'Électrik',
+                'fairy': 'Fée',
+                'fighting': 'Combat',
+                'fire': 'Feu',
+                'flying': 'Vol',
+                'ghost': 'Spectre',
+                'grass': 'Plante',
+                'ground': 'Sol',
+                'ice': 'Glace',
+                'normal': 'Normal',
+                'poison': 'Poison',
+                'psychic': 'Psy',
+                'rock': 'Roche',
+                'steel': 'Acier',
+                'water': 'Eau'
+            };
             
             types.forEach(type => {
                 const value = parseFloat(pokemonData[`against_${type}`]);
@@ -671,13 +861,12 @@
                 .sort((a, b) => a.value - b.value)
                 .slice(0, 3);
 
-            // Afficher les résultats
             document.getElementById('weaknesses').innerHTML = `
                 <h4>Faiblesses :</h4>
                 ${weaknesses.map(w => `
                     <div class="effectiveness-item">
                         <img src="/static/images/types2/${w.type}.png" alt="${w.type}">
-                        <span>x${w.value}</span>
+                        <span>${typeNames[w.type]}</span>
                     </div>
                 `).join('')}
             `;
@@ -687,7 +876,7 @@
                 ${strengths.map(s => `
                     <div class="effectiveness-item">
                         <img src="/static/images/types2/${s.type}.png" alt="${s.type}">
-                        <span>x${s.value}</span>
+                        <span>${typeNames[s.type]}</span>
                     </div>
                 `).join('')}
             `;
@@ -695,8 +884,28 @@
 
         function toggleListMode() {
             const listMode = document.getElementById('pokemonListMode');
-            const currentDisplay = listMode.style.display;
-            listMode.style.display = currentDisplay === 'none' ? 'block' : 'none';
+            const mainContent = document.querySelector('.main-content');
+            const button = document.getElementById('listModeButton');
+            
+            if (listMode.style.display === 'none' || listMode.style.display === '') {
+                listMode.style.display = 'block';
+                mainContent.style.display = 'none';
+                button.innerHTML = `
+                    <svg viewBox="0 0 24 24" class="list-icon">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                    Mode grille
+                `;
+            } else {
+                listMode.style.display = 'none';
+                mainContent.style.display = 'flex';
+                button.innerHTML = `
+                    <svg viewBox="0 0 24 24" class="list-icon">
+                        <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
+                    </svg>
+                    Mode liste
+                `;
+            }
         }
 
         function showPokemonDetails(pokemonNumber) {
@@ -764,6 +973,93 @@
 
         // Initialiser le tri lors du chargement de la page
         document.addEventListener('DOMContentLoaded', initSortableList);
+
+        let comparisonPokemons = [];
+
+        function toggleComparisonMode() {
+            const comparisonMode = document.getElementById('comparisonMode');
+            const isVisible = comparisonMode.style.display === 'block';
+            comparisonMode.style.display = isVisible ? 'none' : 'block';
+            
+            // Ajouter un indicateur visuel quand le mode comparaison est actif
+            document.querySelectorAll('.pokemon-card').forEach(card => {
+                card.classList.toggle('comparison-active', !isVisible);
+            });
+        }
+
+        function addToComparison(pokemonData) {
+            if (comparisonPokemons.length >= 6) {
+                alert('Vous ne pouvez pas comparer plus de 6 Pokémon à la fois.');
+                return;
+            }
+            
+            if (!comparisonPokemons.some(p => p.pokedex_number === pokemonData.pokedex_number)) {
+                comparisonPokemons.push(pokemonData);
+                updateComparisonList();
+            }
+        }
+
+        function updateComparisonList() {
+            const comparisonList = document.getElementById('comparisonList');
+            comparisonList.innerHTML = comparisonPokemons.map(pokemon => `
+                <div class="comparison-item">
+                    <span>${pokemon.name} (#${pokemon.pokedex_number})</span>
+                    <button onclick="removeFromComparison(${pokemon.pokedex_number})">Retirer</button>
+                </div>
+            `).join('');
+        }
+
+        function removeFromComparison(pokedexNumber) {
+            comparisonPokemons = comparisonPokemons.filter(pokemon => pokemon.pokedex_number !== pokedexNumber);
+            updateComparisonList();
+        }
+
+        function startComparison() {
+            if (comparisonPokemons.length < 2) {
+                alert('Veuillez sélectionner au moins 2 Pokémon pour la comparaison.');
+                return;
+            }
+            
+            // Créer une vue de comparaison détaillée
+            const comparisonView = document.createElement('div');
+            comparisonView.className = 'comparison-view';
+            comparisonView.innerHTML = `
+                <div class="comparison-grid">
+                    ${comparisonPokemons.map(pokemon => `
+                        <div class="comparison-pokemon">
+                            <img src="/static/images/sprites/${pokemon.pokedex_number}.png" alt="${pokemon.name}">
+                            <h3>${pokemon.name}</h3>
+                            <div class="stats">
+                                <div class="stat">PV: ${pokemon.hp}</div>
+                                <div class="stat">Attaque: ${pokemon.attack}</div>
+                                <div class="stat">Défense: ${pokemon.defense}</div>
+                                <div class="stat">Att.Spé: ${pokemon.sp_attack}</div>
+                                <div class="stat">Déf.Spé: ${pokemon.sp_defense}</div>
+                                <div class="stat">Vitesse: ${pokemon.speed}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            // Afficher la vue de comparaison dans un modal
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <span class="close-modal" onclick="this.parentElement.parentElement.remove()">&times;</span>
+                    <h2>Comparaison des Pokémon</h2>
+                    ${comparisonView.outerHTML}
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function clearComparison() {
+            comparisonPokemons = [];
+            updateComparisonList();
+        }
     </script>
 </body>
 </html> 

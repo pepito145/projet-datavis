@@ -90,15 +90,20 @@
         #pokedexView {
             display: none;
             width: 100%;
-            max-width: 1200px;
-            margin-top: 30px;
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 0 15px;
         }
 
         .nav-buttons {
             position: fixed;
             bottom: 20px;
-            right: 20px;
+            width: 100%;
+            padding: 0 20px;
+            box-sizing: border-box;
             z-index: 100;
+            display: flex;
+            justify-content: space-between;
         }
 
         .nav-button {
@@ -109,11 +114,16 @@
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             font-size: 1rem;
-            transition: transform 0.2s ease;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .nav-button:hover {
-            transform: translateY(-2px);
+        .nav-button svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
         }
 
         .pokemon-list-mode {
@@ -124,32 +134,387 @@
             right: 0;
             bottom: 0;
             background: white;
-            padding: 20px;
-            overflow-y: auto;
             z-index: 90;
         }
 
+        .list-header {
+            position: sticky;
+            top: 0;
+            display: grid;
+            grid-template-columns: 60px 200px 50px 50px 60px 80px 80px 80px 80px 80px 80px 80px 80px 80px;
+            background-color: #f0f0f0;
+            border-bottom: 2px solid #ddd;
+            padding: 10px 0;
+            z-index: 92;
+        }
+
+        .list-content {
+            padding: 0 20px;
+            overflow-y: auto;
+            height: calc(100% - 45px);
+            margin-top: 0;
+        }
+
         .pokemon-list-item {
+            display: grid;
+            grid-template-columns: 60px 200px 50px 50px 60px 80px 80px 80px 80px 80px 80px 80px 80px 80px;
+            padding: 8px 0;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .header-cell {
             display: flex;
             align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #eee;
+            justify-content: center;
+            gap: 5px;
             cursor: pointer;
         }
 
-        .pokemon-list-item:hover {
-            background: #f5f5f5;
+        .header-cell:hover {
+            background-color: #e0e0e0;
+        }
+
+        .list-cell {
+            padding: 5px;
+            text-align: center;
+        }
+
+        .list-cell.name {
+            display: flex;
+            align-items: center;
+            text-align: left;
+        }
+
+        .type-icon {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
         }
 
         .pokemon-list-sprite {
-            width: 50px;
-            height: 50px;
-            margin-right: 15px;
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
         }
 
-        .pokemon-list-number {
-            width: 60px;
+        .sort-arrow {
+            display: inline-block;
+            width: 12px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: white;
+            margin: 2% auto;
+            padding: 15px;
+            width: 90%;
+            max-width: 1200px;
+            border-radius: 15px;
+            max-height: 95vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h2 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 1.6em;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .map-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+            padding: 0;
+            width: 100%;
+        }
+
+        .map-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            aspect-ratio: 16/9;
+            height: 300px;
+        }
+
+        .map-item:hover {
+            transform: scale(1.02);
+        }
+
+        .map-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #f5f5f5;
+            display: block;
+        }
+
+        #fullImageModal .modal-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: none;
+            box-shadow: none;
+            height: 95vh;
+            overflow: hidden;
+            cursor: default;
+        }
+
+        #fullImage {
+            max-width: 95vw;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 8px;
+            transform-origin: center;
+            transition: transform 0.1s ease;
+        }
+
+        .map-title {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.9em;
+            font-weight: 500;
+            backdrop-filter: blur(5px);
+        }
+
+        .pokemon-search-result {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 30px;
+            margin: 10px 0;
+            background: white;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .pokemon-left-section {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .pokemon-search-result img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+        }
+
+        .pokemon-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .pokemon-number {
+            font-size: 1.1em;
             color: #666;
+        }
+
+        .pokemon-name {
+            font-size: 1.5em;
+            font-weight: 500;
+        }
+
+        .pokemon-types {
+            display: flex;
+            gap: 15px;
+            margin-left: auto;
+        }
+
+        .pokemon-types img {
+            width: 85px;
+            height: 85px;
+        }
+
+        .pokemon-mini-card {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+            width: 350px;
+        }
+
+        .pokemon-types-mini {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .pokemon-types-mini img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .location-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .effectiveness-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .effectiveness-item img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .pokemon-mini-card {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+
+        .mini-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .pokemon-sprite-large {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            margin: 10px auto;
+            display: block;
+        }
+
+        .type-effectiveness-mini {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .effectiveness-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .effectiveness-item img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .locations-list {
+            margin: 15px 0;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .more-info-btn {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            padding: 8px 15px;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .more-info-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .close-mini-card {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .zoom-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1002;
+        }
+
+        .zoom-btn {
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        .zoom-btn:hover {
+            background: rgba(255, 255, 255, 1);
+        }
+
+        #fullImageModal .modal-content.grabbing {
+            cursor: grabbing;
+        }
+
+        #fullImageModal .modal-content.can-drag {
+            cursor: grab;
         }
     </style>
 </head>
@@ -234,22 +599,125 @@
     </div>
 
     <div class="nav-buttons">
-        <button class="nav-button" onclick="toggleListMode()">Mode liste</button>
+        <button class="nav-button" onclick="openMap()">
+            <svg viewBox="0 0 24 24">
+                <path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/>
+            </svg>
+            Carte
+        </button>
+        <div>
+            <button class="nav-button" onclick="toggleListMode()" id="listModeButton">
+                <svg viewBox="0 0 24 24" class="list-icon">
+                    <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
+                </svg>
+                Mode liste
+            </button>
+        </div>
     </div>
 
     <div class="pokemon-list-mode" id="pokemonListMode">
-        {% for pokemon in pokemons %}
-        <div class="pokemon-list-item" onclick="window.location.href='/pokemon?pokedex_number={{ pokemon.pokedex_number }}'">
-            <span class="pokemon-list-number">#{{ pokemon.pokedex_number }}</span>
-            <img src="{{ url_for('static', filename='images/sprites/' + pokemon.pokedex_number + '.png') }}" 
-                 class="pokemon-list-sprite">
-            <span>{{ pokemon.name }}</span>
+        <div class="list-header">
+            <div class="header-cell" data-sort="number"># <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="name">Nom <span class="sort-arrow">▼</span></div>
+            <div class="header-cell" data-sort="type1">Type 1 <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="type2">Type 2 <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="hp">PV <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="attack">Attaque <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="defense">Défense <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="sp_attack">Att. Spé <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="sp_defense">Déf. Spé <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="speed">Vitesse <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="height">Taille <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="weight">Poids <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="capture">Capture <span class="sort-arrow"></span></div>
+            <div class="header-cell" data-sort="is_legendary">Légendaire <span class="sort-arrow"></span></div>
         </div>
-        {% endfor %}
+        <div class="list-content">
+            {% for pokemon in pokemons %}
+            <div class="pokemon-list-item" onclick="window.location.href='/pokemon?pokedex_number={{ pokemon.pokedex_number }}'">
+                <div class="list-cell number">#{{ pokemon.pokedex_number }}</div>
+                <div class="list-cell name">
+                    <img src="{{ url_for('static', filename='images/sprites/' + pokemon.pokedex_number + '.png') }}" 
+                         class="pokemon-list-sprite">
+                    {{ pokemon.name }}
+                </div>
+                <div class="list-cell type1">
+                    <img src="{{ url_for('static', filename='images/types2/' + pokemon.type1 + '.png') }}" 
+                         class="type-icon" title="{{ pokemon.type1 }}">
+                </div>
+                <div class="list-cell type2">
+                    {% if pokemon.type2 %}
+                    <img src="{{ url_for('static', filename='images/types2/' + pokemon.type2 + '.png') }}" 
+                         class="type-icon" title="{{ pokemon.type2 }}">
+                    {% endif %}
+                </div>
+                <div class="list-cell hp">{{ pokemon.hp }}</div>
+                <div class="list-cell attack">{{ pokemon.attack }}</div>
+                <div class="list-cell defense">{{ pokemon.defense }}</div>
+                <div class="list-cell sp_attack">{{ pokemon.sp_attack }}</div>
+                <div class="list-cell sp_defense">{{ pokemon.sp_defense }}</div>
+                <div class="list-cell speed">{{ pokemon.speed }}</div>
+                <div class="list-cell height">{{ pokemon.height_m }}m</div>
+                <div class="list-cell weight">{{ pokemon.weight_kg }}kg</div>
+                <div class="list-cell capture">{{ pokemon.capture_rate }}</div>
+                <div class="list-cell is_legendary">{{ '✨' if pokemon.is_legendary == '1' else '' }}</div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 
     <div id="pokedexView">
         <!-- Le contenu du Pokédex s'affichera ici lors de la recherche -->
+    </div>
+
+    <div id="mapModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('mapModal')">&times;</span>
+            <h2>Cartes de la région de Kanto</h2>
+            <div class="map-grid">
+                <div class="map-item">
+                    <img src="{{ url_for('static', filename='images/map.jpg') }}" alt="Carte détaillée de Kanto" onclick="openFullImage(this.src)">
+                    <div class="map-title">Carte des villes et routes</div>
+                </div>
+                <div class="map-item">
+                    <img src="{{ url_for('static', filename='images/map2.png') }}" alt="Carte des villes et routes" onclick="openFullImage(this.src)">
+                    <div class="map-title">Carte détaillée de la région</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="fullImageModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('fullImageModal')" style="color: white; z-index: 1001;">&times;</span>
+            <img id="fullImage" src="" alt="Image en plein écran">
+        </div>
+    </div>
+
+    <div class="pokemon-mini-card" id="pokemonMiniCard">
+        <span class="close-mini-card" onclick="closeMiniCard()">&times;</span>
+        <div class="mini-card-header">
+            <h2 id="pokemonName"></h2>
+            <span id="pokedexNumber"></span>
+        </div>
+        <img id="pokemonSpriteLarge" class="pokemon-sprite-large" src="" alt="">
+        
+        <div class="type-effectiveness-mini">
+            <div class="weaknesses" id="weaknesses">
+                <h4>Faiblesses :</h4>
+            </div>
+            <div class="strengths" id="strengths">
+                <h4>Forces :</h4>
+            </div>
+        </div>
+
+        <div class="locations">
+            <h4>Où le trouver :</h4>
+            <div class="locations-list" id="locationsList">
+            </div>
+        </div>
+
+        <button class="more-info-btn" onclick="showFullPokemonPage()">Plus d'infos</button>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -265,6 +733,14 @@
                         success: function(response) {
                             $('#pokedexView').html(response).show();
                             $('.types-grid').hide();
+
+                            // Modifier le comportement de clic pour afficher la mini-carte
+                            $('.pokemon-search-result').click(function() {
+                                const pokedexNumber = $(this).data('pokedex-number');
+                                fetch(`/get_pokemon_data/${pokedexNumber}`)
+                                    .then(response => response.json())
+                                    .then(data => showMiniCard(data));
+                            });
                         }
                     });
                 } else {
@@ -281,13 +757,302 @@
         function toggleListMode() {
             const listMode = document.getElementById('pokemonListMode');
             const typesGrid = document.querySelector('.types-grid');
+            const searchContainer = document.querySelector('.search-container');
+            const button = document.getElementById('listModeButton');
             
-            if (listMode.style.display === 'none') {
+            if (listMode.style.display === 'none' || listMode.style.display === '') {
                 listMode.style.display = 'block';
                 typesGrid.style.display = 'none';
+                searchContainer.style.display = 'none';
+                button.innerHTML = `
+                    <svg viewBox="0 0 24 24" class="list-icon">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                    Mode grille
+                `;
             } else {
                 listMode.style.display = 'none';
                 typesGrid.style.display = 'grid';
+                searchContainer.style.display = 'block';
+                button.innerHTML = `
+                    <svg viewBox="0 0 24 24" class="list-icon">
+                        <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
+                    </svg>
+                    Mode liste
+                `;
+            }
+        }
+
+        function initSortableList() {
+            const headers = document.querySelectorAll('.header-cell');
+            let currentSortColumn = 'name';
+            let currentSortDirection = 'desc';
+
+            headers.forEach(header => {
+                header.addEventListener('click', () => {
+                    const sortBy = header.dataset.sort;
+                    const items = Array.from(document.querySelectorAll('.pokemon-list-item'));
+
+                    document.querySelectorAll('.sort-arrow').forEach(arrow => {
+                        arrow.textContent = '';
+                    });
+
+                    if (sortBy === currentSortColumn) {
+                        currentSortDirection = currentSortDirection === 'desc' ? 'asc' : 'desc';
+                    } else {
+                        currentSortColumn = sortBy;
+                        currentSortDirection = 'desc';
+                    }
+
+                    const arrow = header.querySelector('.sort-arrow');
+                    arrow.textContent = currentSortDirection === 'desc' ? '▼' : '▲';
+
+                    items.sort((a, b) => {
+                        let valueA = a.querySelector(`.${sortBy}`).textContent.trim();
+                        let valueB = b.querySelector(`.${sortBy}`).textContent.trim();
+
+                        if (['hp', 'attack', 'defense', 'sp_attack', 'sp_defense', 'speed', 'capture'].includes(sortBy)) {
+                            valueA = parseInt(valueA) || 0;
+                            valueB = parseInt(valueB) || 0;
+                        } else if (['height', 'weight'].includes(sortBy)) {
+                            valueA = parseFloat(valueA) || 0;
+                            valueB = parseFloat(valueB) || 0;
+                        } else if (sortBy === 'number') {
+                            valueA = parseInt(valueA.replace('#', '')) || 0;
+                            valueB = parseInt(valueB.replace('#', '')) || 0;
+                        }
+
+                        if (currentSortDirection === 'asc') {
+                            return valueA > valueB ? 1 : -1;
+                        } else {
+                            return valueA < valueB ? 1 : -1;
+                        }
+                    });
+
+                    const container = document.querySelector('.list-content');
+                    container.innerHTML = '';
+                    items.forEach(item => container.appendChild(item));
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', initSortableList);
+
+        function openMap() {
+            document.getElementById('mapModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            if (modalId === 'fullImageModal') {
+                event.stopPropagation();
+            }
+        }
+
+        let scale = 1;
+        let isDragging = false;
+        let startX, startY, translateX = 0, translateY = 0;
+        const ZOOM_SPEED = 0.5;
+        const MAX_ZOOM = 6;
+        const MIN_ZOOM = 0.5;
+
+        function setupImageZoom() {
+            const modal = document.getElementById('fullImageModal');
+            const modalContent = modal.querySelector('.modal-content');
+            const img = document.getElementById('fullImage');
+
+            // Ajouter les boutons de zoom
+            const zoomControls = document.createElement('div');
+            zoomControls.className = 'zoom-controls';
+            zoomControls.innerHTML = `
+                <button class="zoom-btn" onclick="adjustZoom(1)">+</button>
+                <button class="zoom-btn" onclick="adjustZoom(-1)">-</button>
+            `;
+            modal.appendChild(zoomControls);
+
+            // Gestion de la molette avec zoom plus rapide
+            modalContent.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? -ZOOM_SPEED : ZOOM_SPEED;
+                adjustZoom(delta);
+            });
+
+            // Amélioration du drag & drop
+            img.addEventListener('mousedown', startDragging);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', stopDragging);
+            
+            // Double-clic pour reset
+            modalContent.addEventListener('dblclick', resetZoom);
+        }
+
+        function adjustZoom(delta) {
+            const newScale = scale + delta;
+            if (newScale >= MIN_ZOOM && newScale <= MAX_ZOOM) {
+                scale = newScale;
+                
+                // Centrer le zoom sur le milieu de l'écran
+                const img = document.getElementById('fullImage');
+                const rect = img.getBoundingClientRect();
+                const centerX = window.innerWidth / 2;
+                const centerY = window.innerHeight / 2;
+                
+                // Ajuster la position pour maintenir le point de zoom
+                if (delta > 0) {
+                    translateX = translateX * (scale / (scale - delta)) - (centerX - rect.left) * (delta / scale);
+                    translateY = translateY * (scale / (scale - delta)) - (centerY - rect.top) * (delta / scale);
+                }
+                
+                updateImageTransform();
+            }
+        }
+
+        function startDragging(e) {
+            if (scale <= 1) return;  // Ne permet le déplacement que si zoomé
+            isDragging = true;
+            const img = document.getElementById('fullImage');
+            img.style.cursor = 'grabbing';
+            startX = e.clientX - translateX;
+            startY = e.clientY - translateY;
+            e.preventDefault();
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            
+            const img = document.getElementById('fullImage');
+            const rect = img.getBoundingClientRect();
+            
+            // Calculer les limites de déplacement
+            const maxX = (rect.width * scale - rect.width) / 2;
+            const maxY = (rect.height * scale - rect.height) / 2;
+            
+            // Mettre à jour la position avec des limites
+            translateX = Math.min(maxX, Math.max(-maxX, e.clientX - startX));
+            translateY = Math.min(maxY, Math.max(-maxY, e.clientY - startY));
+            
+            updateImageTransform();
+        }
+
+        function stopDragging() {
+            if (!isDragging) return;
+            isDragging = false;
+            const img = document.getElementById('fullImage');
+            img.style.cursor = scale > 1 ? 'grab' : 'default';
+        }
+
+        function updateImageTransform() {
+            const img = document.getElementById('fullImage');
+            img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            img.style.cursor = scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default';
+        }
+
+        function openFullImage(src) {
+            const fullImage = document.getElementById('fullImage');
+            const fullImageModal = document.getElementById('fullImageModal');
+            fullImage.src = src;
+            fullImageModal.style.display = 'block';
+            
+            scale = 1;
+            translateX = 0;
+            translateY = 0;
+            updateImageTransform();
+            
+            setupImageZoom();
+            event.stopPropagation();
+        }
+
+        let currentPokemonNumber;
+
+        function showMiniCard(pokemonData) {
+            currentPokemonNumber = pokemonData.pokedex_number;
+            const miniCard = document.getElementById('pokemonMiniCard');
+            
+            // Remplir les informations
+            document.getElementById('pokemonName').textContent = pokemonData.name;
+            document.getElementById('pokedexNumber').textContent = `#${pokemonData.pokedex_number}`;
+            document.getElementById('pokemonSpriteLarge').src = `/static/images/sprites/${pokemonData.pokedex_number}.png`;
+            
+            // Remplir les forces et faiblesses
+            fillEffectiveness(pokemonData);
+
+            // Remplir les emplacements
+            fetch(`/get_pokemon_locations/${pokemonData.pokedex_number}`)
+                .then(response => response.json())
+                .then(locations => {
+                    const locationsList = document.getElementById('locationsList');
+                    if (locations.length > 0) {
+                        locationsList.innerHTML = locations.map(loc => 
+                            `<div class="location-item">${loc.route}</div>`
+                        ).join('');
+                    } else {
+                        locationsList.innerHTML = '<div class="location-item">Aucun emplacement connu</div>';
+                    }
+                });
+
+            miniCard.style.display = 'block';
+        }
+
+        function showFullPokemonPage() {
+            window.location.href = `/pokemon?pokedex_number=${currentPokemonNumber}`;
+        }
+
+        function fillEffectiveness(pokemonData) {
+            const effectiveness = [];
+            const types = ['bug', 'dark', 'dragon', 'electric', 'fairy', 'fighting', 'fire', 'flying', 'ghost', 'grass', 'ground', 'ice', 'normal', 'poison', 'psychic', 'rock', 'steel', 'water'];
+            const typeNames = {
+                'bug': 'Insecte', 'dark': 'Ténèbres', 'dragon': 'Dragon',
+                'electric': 'Électrik', 'fairy': 'Fée', 'fighting': 'Combat',
+                'fire': 'Feu', 'flying': 'Vol', 'ghost': 'Spectre',
+                'grass': 'Plante', 'ground': 'Sol', 'ice': 'Glace',
+                'normal': 'Normal', 'poison': 'Poison', 'psychic': 'Psy',
+                'rock': 'Roche', 'steel': 'Acier', 'water': 'Eau'
+            };
+            
+            types.forEach(type => {
+                const value = parseFloat(pokemonData[`against_${type}`]);
+                effectiveness.push({ type, value });
+            });
+
+            const weaknesses = effectiveness
+                .filter(e => e.value > 1)
+                .sort((a, b) => b.value - a.value)
+                .slice(0, 3);
+
+            const strengths = effectiveness
+                .filter(e => e.value < 1)
+                .sort((a, b) => a.value - b.value)
+                .slice(0, 3);
+
+            document.getElementById('weaknesses').innerHTML = `
+                <h4>Faiblesses :</h4>
+                ${weaknesses.map(w => `
+                    <div class="effectiveness-item">
+                        <img src="/static/images/types2/${w.type}.png" alt="${w.type}">
+                        <span>${typeNames[w.type]}</span>
+                    </div>
+                `).join('')}
+            `;
+
+            document.getElementById('strengths').innerHTML = `
+                <h4>Forces :</h4>
+                ${strengths.map(s => `
+                    <div class="effectiveness-item">
+                        <img src="/static/images/types2/${s.type}.png" alt="${s.type}">
+                        <span>${typeNames[s.type]}</span>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function closeMiniCard() {
+            document.getElementById('pokemonMiniCard').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
             }
         }
     </script>
